@@ -1,0 +1,4 @@
+4: Transition definition does not contain a duration value or expression. Line 6.
+[ 03/23/2025 12:30:25.777 parse_animation_one ERROR ] Failed to parse animation script at line 20: Transition definition does not contain a duration value or expression. Line 22.
+[ 03/23/2025 12:30:25.777 parse_animation_one ERROR ] Failed to parse animation script at line 36: Transition definition does not contain a duration value or expression. Line 38.
+[ 03/23/2025 12:30:25.777 parse_animation_one ERROR ] Failed to parse animation script at line 52:
