@@ -1,5 +1,8 @@
-{pkgs, config, ...}:
-let
+{
+  pkgs,
+  config,
+  ...
+}: let
   # Define the colors in Nix variables
   colors = {
     background = "#282A2E";
@@ -36,274 +39,270 @@ let
     crust = "#11111b";
     transparent = "#FF00000";
   };
-  
 in {
-  home.packages = with pkgs; [ polybar ];
+  home.packages = with pkgs; [polybar];
   xdg.configFile."polybar/config.ini".text = ''
-;==========================================================
-;
-;   ██████╗  ██████╗ ██╗  ██╗   ██╗██████╗  █████╗ ██████╗
-;   ██╔══██╗██╔═══██╗██║  ╚██╗ ██╔╝██╔══██╗██╔══██╗██╔══██╗
-;   ██████╔╝██║   ██║██║   ╚████╔╝ ██████╔╝███████║██████╔╝
-;   ██╔═══╝ ██║   ██║██║    ╚██╔╝  ██╔══██╗██╔══██║██╔══██╗
-;   ██║     ╚██████╔╝███████╗██║   ██████╔╝██║  ██║██║  ██║
-;   ╚═╝      ╚═════╝ ╚══════╝╚═╝   ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝
-;
-;==========================================================
+    ;==========================================================
+    ;
+    ;   ██████╗  ██████╗ ██╗  ██╗   ██╗██████╗  █████╗ ██████╗
+    ;   ██╔══██╗██╔═══██╗██║  ╚██╗ ██╔╝██╔══██╗██╔══██╗██╔══██╗
+    ;   ██████╔╝██║   ██║██║   ╚████╔╝ ██████╔╝███████║██████╔╝
+    ;   ██╔═══╝ ██║   ██║██║    ╚██╔╝  ██╔══██╗██╔══██║██╔══██╗
+    ;   ██║     ╚██████╔╝███████╗██║   ██████╔╝██║  ██║██║  ██║
+    ;   ╚═╝      ╚═════╝ ╚══════╝╚═╝   ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝
+    ;
+    ;==========================================================
 
 
-[bar/bar]
+    [bar/bar]
 
-width = 100%
+    width = 100%
 
-height = 24pt
+    height = 24pt
 
-radius = 6
+    radius = 6
 
 
-background = ${colors.base}
+    background = ${colors.base}
 
-foreground = ${colors.surface1}
+    foreground = ${colors.surface1}
 
 
-line-size = 3pt
+    line-size = 3pt
 
 
-border-size = 4pt
+    border-size = 4pt
 
-border-color = #00000000
+    border-color = #00000000
 
 
-padding-left = 0
+    padding-left = 0
 
-padding-right = 1
+    padding-right = 1
 
 
-module-margin = 1
+    module-margin = 1
 
 
-separator = |
+    separator = |
 
-separator-foreground = ${colors.disabled}
+    separator-foreground = ${colors.disabled}
 
 
-font-0 = JetBrainsMono Nerd Font;2
+    font-0 = JetBrainsMono Nerd Font;2
 
+    modules-center = xworkspaces
+    modules-right = memory cpu battery date systray
 
-modules-left = xworkspaces nix_logo
-modules-center = xwindow
-modules-right = filesystem  xkeyboard memory cpu battery date systray
 
+    cursor-click = pointer
 
-cursor-click = pointer
+    cursor-scroll = ns-resize
 
-cursor-scroll = ns-resize
 
+    enable-ipc = true
 
-enable-ipc = true
 
+    [module/systray]
 
-[module/systray]
+    type = internal/tray
 
-type = internal/tray
 
+    format-margin = 8pt
 
-format-margin = 8pt
+    tray-spacing = 16pt
 
-tray-spacing = 16pt
+    [module/battery]
 
-[module/battery]
+    type = internal/battery
 
-type = internal/battery
+    format-margin = 8pt
 
-format-margin = 8pt
+    [module/xworkspaces]
 
-[module/xworkspaces]
+    type = internal/xworkspaces
 
-type = internal/xworkspaces
+    label-active = %name%
 
-label-active = %name%
+    label-active-background = ${colors.surface2}
 
-label-active-background = ${colors.surface2}
+    label-active-underline= ${colors.mauve}
 
-label-active-underline= ${colors.mauve}
+    label-active-padding = 1
 
-label-active-padding = 1
 
+    label-occupied = %name%
 
-label-occupied = %name%
+    label-occupied-padding = 1
 
-label-occupied-padding = 1
 
+    label-urgent = %name%
 
-label-urgent = %name%
+    label-urgent-background = ${colors.alert}
 
-label-urgent-background = ${colors.alert}
+    label-urgent-padding = 1
 
-label-urgent-padding = 1
 
+    label-empty = %name%
 
-label-empty = %name%
+    label-empty-foreground = ${colors.overlay2}
 
-label-empty-foreground = ${colors.overlay2}
+    label-empty-padding = 1
 
-label-empty-padding = 1
 
+    [module/xwindow]
 
-[module/xwindow]
+    type = internal/xwindow
+    label = %{F#F0C674}%title:0:60:...%
+    ; title:0:60:...
 
-type = internal/xwindow
-label = %{F#F0C674}%title:0:60:...%
-; title:0:60:... 
 
 
+    [module/filesystem]
 
-[module/filesystem]
+    type = internal/fs
 
-type = internal/fs
+    interval = 25
 
-interval = 25
 
+    mount-0 = /
 
-mount-0 = /
 
+    label-mounted = %{F#F0C674}%mountpoint%%{F-} %percentage_used%%
 
-label-mounted = %{F#F0C674}%mountpoint%%{F-} %percentage_used%%
 
+    label-unmounted = %mountpoint% not mounted
 
-label-unmounted = %mountpoint% not mounted
+    label-unmounted-foreground = ${colors.disabled}
 
-label-unmounted-foreground = ${colors.disabled}
 
+    [module/pulseaudio]
 
-[module/pulseaudio]
+    type = internal/pulseaudio
 
-type = internal/pulseaudio
 
+    format-volume-prefix = "VOL "
 
-format-volume-prefix = "VOL "
+    format-volume-prefix-foreground = ${colors.primary}
 
-format-volume-prefix-foreground = ${colors.primary}
+    format-volume = <label-volume>
 
-format-volume = <label-volume>
 
+    label-volume = %percentage%%
 
-label-volume = %percentage%%
 
+    label-muted = muted
 
-label-muted = muted
+    label-muted-foreground = ${colors.disabled}
 
-label-muted-foreground = ${colors.disabled}
+    [module/nix_logo]
+    type = custom/text
+    content = %{F#89dceb} %{F-}
 
-[module/nix_logo]
-type = custom/text
-content = %{F#89dceb} %{F-}
 
+    [module/xkeyboard]
 
-[module/xkeyboard]
+    type = internal/xkeyboard
 
-type = internal/xkeyboard
+    blacklist-0 = num lock
 
-blacklist-0 = num lock
 
+    label-layout = % layout%
 
-label-layout = %layout%
+    label-layout-foreground = ${colors.primary}
 
-label-layout-foreground = ${colors.primary}
 
+    label-indicator-padding = 2
 
-label-indicator-padding = 2
+    label-indicator-margin = 1
 
-label-indicator-margin = 1
+    label-indicator-foreground = ${colors.background}
 
-label-indicator-foreground = ${colors.background}
+    label-indicator-background = ${colors.secondary}
 
-label-indicator-background = ${colors.secondary}
 
+    [module/memory]
 
-[module/memory]
+    type = internal/memory
 
-type = internal/memory
+    interval = 2
 
-interval = 2
+    format-prefix = "RAM "
 
-format-prefix = "RAM "
+    format-prefix-foreground = ${colors.primary}
 
-format-prefix-foreground = ${colors.primary}
+    label = %percentage_used:2%%
 
-label = %percentage_used:2%%
 
+    [module/cpu]
 
-[module/cpu]
+    type = internal/cpu
 
-type = internal/cpu
+    interval = 2
 
-interval = 2
+    format-prefix = "CPU "
 
-format-prefix = "CPU "
+    format-prefix-foreground = ${colors.primary}
 
-format-prefix-foreground = ${colors.primary}
+    label = %percentage:2%%
 
-label = %percentage:2%%
 
+    [network-base]
 
-[network-base]
+    type = internal/network
 
-type = internal/network
+    interval = 5
 
-interval = 5
+    format-connected = <label-connected>
 
-format-connected = <label-connected>
+    format-disconnected = <label-disconnected>
 
-format-disconnected = <label-disconnected>
+    label-disconnected = %{F#F0C674}%ifname%%{F#707880} disconnected
 
-label-disconnected = %{F#F0C674}%ifname%%{F#707880} disconnected
 
+    [module/wlan]
 
-[module/wlan]
+    inherit = network-base
 
-inherit = network-base
+    interface-type = wireless
 
-interface-type = wireless
+    label-connected = %{F#F0C674}%ifname%%{F-} %essid% %local_ip%
 
-label-connected = %{F#F0C674}%ifname%%{F-} %essid% %local_ip%
 
+    [module/eth]
 
-[module/eth]
+    inherit = network-base
 
-inherit = network-base
+    interface-type = wired
 
-interface-type = wired
+    label-connected = %{F#F0C674}%ifname%%{F-} %local_ip%
 
-label-connected = %{F#F0C674}%ifname%%{F-} %local_ip%
 
+    [module/date]
 
-[module/date]
+    type = internal/date
 
-type = internal/date
+    interval = 1
 
-interval = 1
 
+    date = %H:%M
 
-date = %H:%M
+    date-alt = %Y-%m-%d %H:%M:%S
 
-date-alt = %Y-%m-%d %H:%M:%S
 
+    label = %date%
 
-label = %date%
+    label-foreground = ${colors.primary}
 
-label-foreground = ${colors.primary}
 
+    [settings]
 
-[settings]
+    screenchange-reload = true
 
-screenchange-reload = true
+    pseudo-transparency = true
 
-pseudo-transparency = true
 
+    ; vim:ft=dosini
 
-; vim:ft=dosini
- 
   '';
 }
-

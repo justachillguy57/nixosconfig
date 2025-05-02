@@ -11,16 +11,21 @@
     stylix.url = "github:danth/stylix";
   };
 
-  outputs = { self, nixpkgs, home-manager,  zen-browser, stylix, ...} @ inputs:
-  {
-  	nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
-		system = "x86_64-linux";
-		specialArgs = { inherit inputs; };
-		modules = [
-			./configuration.nix 
-			./ghost.nix
-		];
-	};
+  outputs = {
+    self,
+    nixpkgs,
+    home-manager,
+    zen-browser,
+    stylix,
+    ...
+  } @ inputs: {
+    nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      specialArgs = {inherit inputs;};
+      modules = [
+        ./configuration.nix
+        ./ghost.nix
+      ];
+    };
   };
 }
-

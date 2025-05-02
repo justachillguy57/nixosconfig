@@ -4,7 +4,7 @@
 
   xdg.configFile."rofi/config.rasi".text = ''
     configuration{
-      modi: "run,drun,window";
+      modi: "run,drun,window,ssh";
       show-icons: true;
       terminal: "ghostty";
       font: "JetBrainsMono Nerd Font 16";
@@ -12,10 +12,11 @@
       location: 0;
       disable-history: false;
       hide-scrollbar: true;
-      display-drun: "   Apps ";
-      display-run: "   Run ";
+      display-run: "   Commands ";
+      display-drun: "   Run ";
       display-window: "   Window";
       display-Network: " 󰤨  Network";
+      display-ssh: "  SSH "; 
       sidebar-mode: true;
     }
 

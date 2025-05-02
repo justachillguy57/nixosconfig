@@ -1,23 +1,69 @@
-{ config, pkgs, inputs,... }:
 {
-  imports =
-    [ 
-      ./hardware-configuration.nix
-      inputs.home-manager.nixosModules.home-manager 
-      inputs.stylix.nixosModules.stylix
-    ];
+  config,
+  pkgs,
+  inputs,
+  ...
+}: {
+  imports = [
+    ./hardware-configuration.nix
+    inputs.home-manager.nixosModules.home-manager
+    inputs.stylix.nixosModules.stylix
+  ];
   programs.nano.enable = false;
+  services.tailscale.enable = true;
 
-  environment.shells = with pkgs; [ zsh ];
+  hardware.pulseaudio.enable = false;
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };
+  services.gnome.gnome-keyring.enable = true;
+  security.pam.services.ly.enableGnomeKeyring = true;
+
+  programs.virt-manager.enable = true;
+  users.groups.libvirtd.members = ["ghost"];
+  virtualisation.libvirtd.enable = true;
+
+  services.pipewire.wireplumber.extraConfig."10-bluez" = {
+    "monitor.bluez.properties" = {
+      "bluez5.enable-sbc-xq" = true;
+      "bluez5.enable-msbc" = true;
+      "bluez5.dummy-avrcp-player" = true;
+      "bluez5.enable-hw-volume" = true;
+      "bluez5.hw-volume" = ["a2dp_sink" "a2dp_source" "hsp_hs" "hsp_ag"];
+      "bluez5.codecs" = [
+        "sbc"
+        "aac"
+        "sbc_xq"
+        "ldac"
+        "aptx"
+        "aptx_hd"
+      ];
+      "bluez5.roles" = [
+        "hsp_hs"
+        "hsp_ag"
+        "hfp_hf"
+        "hfp_ag"
+        "bap_sink"
+        "bap_source"
+        "a2dp_sink"
+        "a2dp_source"
+      ];
+    };
+  };
+
+  environment.shells = with pkgs; [zsh];
   users.defaultUserShell = pkgs.zsh;
   users.users.ghost.shell = pkgs.zsh;
   users.users.ghost.useDefaultShell = true;
 
-  # zsh configuration 
+  # zsh enabling
   programs.zsh.enable = true;
 
-
-  services.xserver.excludePackages = [ pkgs.xterm ];
+  services.xserver.excludePackages = [pkgs.xterm];
   nix.settings.experimental-features = ["nix-command" "flakes"];
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -30,9 +76,9 @@
 
   i18n.defaultLocale = "en_US.UTF-8";
   i18n.supportedLocales = [
-      "C.UTF-8/UTF-8"
-      "en_US.UTF-8/UTF-8"
-  ]; 
+    "C.UTF-8/UTF-8"
+    "en_US.UTF-8/UTF-8"
+  ];
 
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "en_US.UTF-8";
@@ -47,10 +93,8 @@
   };
 
   services.xserver.enable = true;
-
   services.xserver.windowManager.i3.enable = true;
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  services.displayManager.ly.enable = true;
 
   services.xserver.xkb = {
     layout = "us";
@@ -60,90 +104,62 @@
 
   services.printing.enable = true;
 
-  hardware.pulseaudio.enable = false;
-  security.rtkit.enable = true;
-  services.pipewire = {
+  services.blueman.enable = true;
+  hardware.bluetooth = {
     enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
+    settings = {
+      General = {
+        Enable = "Source,Sink,Media,Socket";
+      };
+    };
   };
 
   users.users.ghost = {
     isNormalUser = true;
     description = "Ghost";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = ["networkmanager" "wheel" "libvirtd" "dialout" "audio"];
     packages = with pkgs; [
-        gnome-pomodoro
     ];
   };
 
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
-	gitFull 
-	neovim
-	xorg.xinit
-	xorg.libX11 
-	nerd-fonts.jetbrains-mono
-	jetbrains-mono
-	spotify 
-	obsidian
+    gitFull
+    xorg.xinit
+    xorg.libX11
+    nerd-fonts.jetbrains-mono
+    jetbrains-mono
+    spotify
+    obsidian
     pamixer
     nixd
+    alsa-utils
   ];
-  environment.gnome.excludePackages = (with pkgs; [
-	  atomix 
-	  cheese 
-	  epiphany 
-	  evince 
-	  geary 
-	  gedit 
-	  gnome-characters
-	  gnome-music
-	  gnome-photos
-	  gnome-terminal
-	  gnome-tour
-	  hitori 
-	  iagno 
-	  tali 
-      gnome-console 
-      gnome-text-editor
-      gnome-connections
-      gnome-system-monitor
-      gnome-calculator
-      file-roller
-      gnome-maps
-      gnome-disk-utility
-      gnome-extensions-cli
-      gnome-contacts
-  ]);
-  
-
 
   stylix.enable = true;
   stylix.base16Scheme = ./catppuccin-mocha.yaml;
   stylix.fonts = {
     monospace = {
-        package = pkgs.nerd-fonts.jetbrains-mono; 
-        name = "JetBrainsMono Nerd Font Mono"; 
+      package = pkgs.nerd-fonts.jetbrains-mono;
+      name = "JetBrainsMono Nerd Font Mono";
     };
     sansSerif = {
-        package = pkgs.nerd-fonts.jetbrains-mono;
-        name = "JetBrainsMono Nerd Font";
+      package = pkgs.nerd-fonts.jetbrains-mono;
+      name = "JetBrainsMono Nerd Font";
     };
-    serif = { 
-        package = pkgs.nerd-fonts.jetbrains-mono; 
-        name = "JetBrainsMono Nerd Font"; 
-    }; 
+    serif = {
+      package = pkgs.nerd-fonts.jetbrains-mono;
+      name = "JetBrainsMono Nerd Font";
+    };
   };
-  stylix.cursor = { 
-        package = pkgs.apple-cursor;
-        name = "macOS";
-        size = 24;
+  stylix.cursor = {
+    package = pkgs.apple-cursor;
+    name = "macOS";
+    size = 24;
   };
-  stylix.image = ./to.png;
+  stylix.image = ./to.jpg;
   stylix.polarity = "dark";
 
-  system.stateVersion = "24.11"; 
+  system.stateVersion = "24.11";
 }
